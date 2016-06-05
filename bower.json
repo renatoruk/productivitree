@@ -1,0 +1,21 @@
+{
+  "name": "productivitree",
+  "description": "Interactive tree for productivity boost",
+  "main": "index.js",
+  "authors": [
+    "Renato Ruk"
+  ],
+  "license": "ISC",
+  "homepage": "",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "three.js": "threejs#*"
+  }
+}

@@ -1,10 +1,13 @@
+var productivitree = {};
+
 var container = document.getElementById('container');
 
 var camera,
     renderer,
     scene,
     controls,
-    stats;
+    stats,
+    treeContainer;
 
 
 // config constructor
@@ -33,7 +36,7 @@ function Config() {
     this.twistRate = 3.02;
     this.trunkLength = 2.4;
 
-    this.update = function () {
+    this.update = function() {
         createTree(control);
     };
 }
@@ -104,7 +107,7 @@ function init() {
 
     // show stats
     addStats();
-    
+
     // add controls
     controls = new THREE.OrbitControls(camera, renderer.domElement);
     controls.enableDamping = true;
@@ -123,13 +126,18 @@ function init() {
     controls.enablePan = false;
 
 
+    productivitree.animation.initAnimations();
+
     // start rendering the scene
     render();
+    productivitree.animation.tweens.scale.start();
 }
 
 
 
 function buildTree(config) {
+
+    treeContainer = new THREE.Object3D();
 
     var twig = scene.getObjectByName('twig');
     var trunk = scene.getObjectByName('trunk');
@@ -230,15 +238,17 @@ function buildTree(config) {
     trunkGeom.computeVertexNormals(true);
     leaveGeom.computeVertexNormals(true);
 
-    var trunkMesh = new THREE.Mesh(trunkGeom, trunkMat);
+    trunkMesh = new THREE.Mesh(trunkGeom, trunkMat);
     trunkMesh.name = 'trunk';
 
     var twigMesh = new THREE.Mesh(leaveGeom, leaveMat);
     twigMesh.name = 'twig';
 
-    scene.add(trunkMesh);
-    scene.add(twigMesh);
 
+    treeContainer.add(trunkMesh);
+    treeContainer.add(twigMesh);
+
+    scene.add(treeContainer);
 }
 
 /////////////////////////////////////////////////

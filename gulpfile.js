@@ -157,7 +157,7 @@ gulp.task('lintSCSS', function() {
             postcssPlugins,
             {syntax: postscss}
             )
-        )
+        );
 });
 
 /*************************************/
@@ -207,7 +207,7 @@ gulp.task('criticalCSS', function () {
 
 
 //OPTIMIZE IMAGES
-gulp.task('imageMIN', function(){
+gulp.task('imageMIN', function() {
     return gulp.src(paths.img.src)
         .pipe($.imagemin({
             expand: true
@@ -217,7 +217,7 @@ gulp.task('imageMIN', function(){
 
 
 //OPTIMIZE SVG
-gulp.task('svgMIN', function(){
+gulp.task('svgMIN', function() {
     return gulp.src(paths.svg.src)
         .pipe($.svgmin({
             plugins: [{
@@ -364,4 +364,18 @@ gulp.task('watchFrontendJS', ['buildAllJS'], function () {
 //WATCH CUSTOM JS WITH LINTER
 gulp.task('watchFrontendJSLinter', ['lintJS', 'buildAllJS'], function () {
     gulp.watch(paths.frontendJS.srcloc, ['lintJS', 'buildAllJS']);
+});
+
+
+
+
+
+/*************************************/
+/***** ACCESSIBILITY *****************/
+/*************************************/
+
+gulp.task('access', function () {
+   gulp.src('*.html')
+       .pipe($.a11y())
+       .pipe($.a11y.reporter());
 });

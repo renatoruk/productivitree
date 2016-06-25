@@ -50,8 +50,12 @@ var paths = {
 
     pluginsJS: {
         src: [
-            'bower_components/jquery/dist/jquery.js',
-            'static/js/vendor/**/*.js'
+            'bower_components/three.js/build/three.js',
+            'bower_components/three.js/examples/js/libs/tween.min.js',
+            'bower_components/three.js/examples/js/Detector.js',
+            'bower_components/three.js/examples/js/libs/stats.min.js',
+            'bower_components/three.js/examples/js/libs/dat.gui.min.js',
+            'bower_components/three.js/examples/js/controls/OrbitControls.js'
         ],
         dest: 'static/js/',
         build: 'static/dist/'

@@ -1,0 +1,18 @@
+a {
+    cursor: pointer;
+}
+
+.btn {
+    background-color: #F0F0F0;
+    display: inline-block;
+    padding: 1rem;
+    transition: all 0.2s;
+}
+
+.btn--play {
+    &:hover {
+        background-color: #ff8400;
+        user-select: none;
+    }
+}
+

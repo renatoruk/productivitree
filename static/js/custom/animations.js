@@ -10,7 +10,7 @@ productivitree.animation.tweens = function() {
 }();
 
 productivitree.animation.initAnimations = function() {
-    
+
     // set namespace
     var tween = productivitree.animation.tweens;
 
@@ -20,7 +20,7 @@ productivitree.animation.initAnimations = function() {
     };
 
     tween.scale = new TWEEN.Tween(scale.initial)
-        // .delay(2000)
+    // .delay(2000)
         .to(scale.target, 2000)
         .easing(TWEEN.Easing.Sinusoidal.InOut)
         .onUpdate(function() {
@@ -59,3 +59,27 @@ function updateScaleRecursive(child) {
 
     }
 }
+
+
+// DOM handling
+
+productivitree.animation.eventHandlers = (function() {
+
+    var _play_button = document.querySelector('.js-play-animation');
+
+    function addPlayListener() {
+        _play_button.addEventListener('click', function() {
+            productivitree.animation.tweens.scale.start();
+        });
+    }
+
+    return {
+        addPlayListener: addPlayListener
+    }
+
+})();
+
+
+(function() {
+    productivitree.animation.eventHandlers.addPlayListener();
+})();

@@ -12,21 +12,21 @@ var camera,
 // config constructor
 productivitree.Config = function() {
 
-    this.seed = 262;
+    this.seed = 400;
     this.segments = 6;
     this.levels = 5;
-    this.vMultiplier = 2.36;
+    this.vMultiplier = 0.6;
     this.twigScale = 0.1;
-    this.initalBranchLength = 0.49;
-    this.lengthFalloffFactor = 0.85;
-    this.lengthFalloffPower = 0.99;
-    this.clumpMax = 0.454;
-    this.clumpMin = 0.404;
-    this.branchFactor = 2.45;
+    this.initalBranchLength = 1;
+    this.lengthFalloffFactor = 0.8;
+    this.lengthFalloffPower = 0.9;
+    this.clumpMax = 0.45;
+    this.clumpMin = 0.4;
+    this.branchFactor = 2.5;
     this.dropAmount = -0.1;
-    this.growAmount = 0.235;
+    this.growAmount = 0.23;
     this.sweepAmount = 0.01;
-    this.maxRadius = 0.139;
+    this.maxRadius = 0.2;
     this.climbRate = 0.371;
     this.trunkKink = 0.093;
     this.treeSteps = 10;
@@ -295,42 +295,75 @@ function addControls(controlObject) {
 
     var gui = new dat.GUI();
 
-    gui.add(controlObject, 'seed').onChange(function(value) {
+    gui.add(controlObject, 'seed').onChange(function() {
         buildTree(configObj);
     });
-    gui.add(controlObject, 'segments').onChange(function(value) {
+    gui.add(controlObject, 'segments').onChange(function() {
         buildTree(configObj);
     });
-    gui.add(controlObject, 'levels').onChange(function(value) {
+    gui.add(controlObject, 'levels').onChange(function() {
         buildTree(configObj);
     });
-    gui.add(controlObject, 'vMultiplier').onChange(function(value) {
+    gui.add(controlObject, 'vMultiplier').onChange(function() {
         buildTree(configObj);
     });
-    gui.add(controlObject, 'twigScale').onChange(function(value) {
+    gui.add(controlObject, 'twigScale').onChange(function() {
         buildTree(configObj);
     });
-    gui.add(controlObject, 'initalBranchLength').onChange(function(value) {
+    gui.add(controlObject, 'initalBranchLength').onChange(function() {
         buildTree(configObj);
     });
-    gui.add(controlObject, 'lengthFalloffFactor');
-    gui.add(controlObject, 'lengthFalloffPower');
-    gui.add(controlObject, 'clumpMax');
-    gui.add(controlObject, 'clumpMin');
-    gui.add(controlObject, 'branchFactor');
-    gui.add(controlObject, 'dropAmount');
-    gui.add(controlObject, 'growAmount');
-    gui.add(controlObject, 'sweepAmount');
-    gui.add(controlObject, 'maxRadius');
-    gui.add(controlObject, 'climbRate');
-    gui.add(controlObject, 'trunkKink');
-    gui.add(controlObject, 'trunkKink');
-    gui.add(controlObject, 'treeSteps');
-    gui.add(controlObject, 'taperRate');
-    gui.add(controlObject, 'radiusFalloffRate');
-    gui.add(controlObject, 'twistRate');
-    gui.add(controlObject, 'radiusFalloffRate');
-    gui.add(controlObject, 'trunkLength');
+    gui.add(controlObject, 'lengthFalloffFactor').onChange(function() {
+        buildTree(configObj);
+    });
+    gui.add(controlObject, 'lengthFalloffPower').onChange(function() {
+        buildTree(configObj);
+    });
+    gui.add(controlObject, 'clumpMax').onChange(function() {
+        buildTree(configObj);
+    });
+    gui.add(controlObject, 'clumpMin').onChange(function() {
+        buildTree(configObj);
+    });
+    gui.add(controlObject, 'branchFactor').onChange(function() {
+        buildTree(configObj);
+    });
+    gui.add(controlObject, 'dropAmount').min(-0.5).max(0.5).onChange(function() {
+        buildTree(configObj);
+    });
+    gui.add(controlObject, 'growAmount').onChange(function() {
+        buildTree(configObj);
+    });
+    gui.add(controlObject, 'sweepAmount').onChange(function() {
+        buildTree(configObj);
+    });
+    gui.add(controlObject, 'maxRadius').onChange(function() {
+        buildTree(configObj);
+    });
+    gui.add(controlObject, 'climbRate').onChange(function() {
+        buildTree(configObj);
+    });
+    gui.add(controlObject, 'trunkKink').onChange(function() {
+        buildTree(configObj);
+    });
+    gui.add(controlObject, 'treeSteps').onChange(function() {
+        buildTree(configObj);
+    });
+    gui.add(controlObject, 'taperRate').onChange(function() {
+        buildTree(configObj);
+    });
+    gui.add(controlObject, 'radiusFalloffRate').onChange(function() {
+        buildTree(configObj);
+    });
+    gui.add(controlObject, 'twistRate').onChange(function() {
+        buildTree(configObj);
+    });
+    gui.add(controlObject, 'radiusFalloffRate').onChange(function() {
+        buildTree(configObj);
+    });
+    gui.add(controlObject, 'trunkLength').onChange(function() {
+        buildTree(configObj);
+    });
 }
 
 // window resize function

@@ -9,9 +9,8 @@ var camera,
     stats,
     treeContainer;
 
-
 // config constructor
-function Config() {
+productivitree.Config = function() {
 
     this.seed = 262;
     this.segments = 6;
@@ -37,13 +36,14 @@ function Config() {
     this.trunkLength = 2.4;
 
     this.update = function() {
-        createTree(control);
+        buildTree(this);
     };
-}
+};
 
 
-var configObj = new Config();
 
+
+var configObj = new productivitree.Config();
 
 /**
  * initialize the scene, camera and objects
@@ -108,6 +108,9 @@ function init() {
     // show stats
     addStats();
 
+    // show controls
+    addControls(configObj);
+
     // add controls
     controls = new THREE.OrbitControls(camera, renderer.domElement);
     controls.enableDamping = true;
@@ -118,7 +121,7 @@ function init() {
     controls.target = new THREE.Vector3(0,5,0);
 
     // set automatic rotation
-    // controls.autoRotate = true;
+    controls.autoRotate = true;
     controls.autoRotateSpeed = 0.3;
 
     // disable below the ground
@@ -130,21 +133,28 @@ function init() {
 
     // start rendering the scene
     render();
-    productivitree.animation.tweens.scale.start();
 }
 
 
 
 function buildTree(config) {
 
-    treeContainer = new THREE.Object3D();
 
+    var tree = scene.getObjectByName('treeContainer');
     var twig = scene.getObjectByName('twig');
     var trunk = scene.getObjectByName('trunk');
 
-    if (twig) scene.remove(twig);
-    if (trunk) scene.remove(trunk);
+    if (tree) {
+        scene.remove(tree);
+    }
 
+    if (twig) {
+        scene.remove(twig);
+    }
+
+    if (trunk) {
+        scene.remove(trunk);
+    }
 
     var myTree = new Tree({
         "seed": config.seed,
@@ -171,6 +181,7 @@ function buildTree(config) {
         "trunkLength": config.trunkLength
     });
 
+    treeContainer = new THREE.Object3D();
     var trunkGeom = new THREE.Geometry();
     var leaveGeom = new THREE.Geometry();
 
@@ -244,9 +255,12 @@ function buildTree(config) {
     var twigMesh = new THREE.Mesh(leaveGeom, leaveMat);
     twigMesh.name = 'twig';
 
-
+    // add objects to container
     treeContainer.add(trunkMesh);
     treeContainer.add(twigMesh);
+
+    // name the tree container
+    treeContainer.name = 'treeContainer';
 
     scene.add(treeContainer);
 }
@@ -259,8 +273,10 @@ function buildTree(config) {
 function render() {
     renderer.render(scene, camera);
     stats.update(renderer);
-    requestAnimationFrame(render);
+    TWEEN.update();
     controls.update();
+
+    requestAnimationFrame(render);
 }
 
 // add stats to window
@@ -273,6 +289,48 @@ function addStats() {
     stats.domElement.style.top = '0px';
 
     document.body.appendChild(stats.domElement);
+}
+
+function addControls(controlObject) {
+
+    var gui = new dat.GUI();
+
+    gui.add(controlObject, 'seed').onChange(function(value) {
+        buildTree(configObj);
+    });
+    gui.add(controlObject, 'segments').onChange(function(value) {
+        buildTree(configObj);
+    });
+    gui.add(controlObject, 'levels').onChange(function(value) {
+        buildTree(configObj);
+    });
+    gui.add(controlObject, 'vMultiplier').onChange(function(value) {
+        buildTree(configObj);
+    });
+    gui.add(controlObject, 'twigScale').onChange(function(value) {
+        buildTree(configObj);
+    });
+    gui.add(controlObject, 'initalBranchLength').onChange(function(value) {
+        buildTree(configObj);
+    });
+    gui.add(controlObject, 'lengthFalloffFactor');
+    gui.add(controlObject, 'lengthFalloffPower');
+    gui.add(controlObject, 'clumpMax');
+    gui.add(controlObject, 'clumpMin');
+    gui.add(controlObject, 'branchFactor');
+    gui.add(controlObject, 'dropAmount');
+    gui.add(controlObject, 'growAmount');
+    gui.add(controlObject, 'sweepAmount');
+    gui.add(controlObject, 'maxRadius');
+    gui.add(controlObject, 'climbRate');
+    gui.add(controlObject, 'trunkKink');
+    gui.add(controlObject, 'trunkKink');
+    gui.add(controlObject, 'treeSteps');
+    gui.add(controlObject, 'taperRate');
+    gui.add(controlObject, 'radiusFalloffRate');
+    gui.add(controlObject, 'twistRate');
+    gui.add(controlObject, 'radiusFalloffRate');
+    gui.add(controlObject, 'trunkLength');
 }
 
 // window resize function

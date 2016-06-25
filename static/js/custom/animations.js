@@ -52,11 +52,8 @@ function updateScaleRecursive(child) {
         child.children[c].updateMatrix();
         child.children[c].geometry.applyMatrix(child.children[c].matrix);
         child.children[c].matrix.identity();
-        // child.children[c].geometry.vertices.scale = child.scale;
-        console.log(child.children[c].geometry.vertices);
+        child.children[c].geometry.vertices.scale = child.scale;
         child.children[c].geometry.verticesNeedUpdate = true;
-        console.log(child.children[c].geometry.verticesNeedUpdate);
-
     }
 }
 

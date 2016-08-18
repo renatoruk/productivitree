@@ -76,7 +76,17 @@ productivitree.animation.eventHandlers = (function() {
 
 })();
 
+productivitree.animation.morphHanlder = function() {
+    var morphVerticeHolder = [];
+    for(var i = 0; i < 20; i++) {
+        morphVerticeHolder[i] = [];
+    }
+};
 
+
+
+
+// main function calls
 (function() {
     productivitree.animation.eventHandlers.addPlayListener();
 })();

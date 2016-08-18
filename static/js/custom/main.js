@@ -2,15 +2,20 @@ var productivitree = {};
 
 var container = document.getElementById('container');
 
+// TODO: change variable names
 var camera,
     renderer,
     scene,
     controls,
     stats,
-    treeContainer;
+    treeContainer,
+    mesh,
+    mixer,
+    testCube;
+
 
 // config constructor
-productivitree.Config = function() {
+productivitree.TreeConfig = function() {
 
     this.seed = 400;
     this.segments = 6;
@@ -24,10 +29,10 @@ productivitree.Config = function() {
     this.clumpMin = 0.4;
     this.branchFactor = 2.5;
     this.dropAmount = -0.1;
-    this.growAmount = 0.23;
-    this.sweepAmount = 0.01;
-    this.maxRadius = 0.2;
-    this.climbRate = 0.371;
+    this.growAmount = 0.35;
+    this.sweepAmount = 0.025;
+    this.maxRadius = 0.09;
+    this.climbRate = 0.33;
     this.trunkKink = 0.093;
     this.treeSteps = 10;
     this.taperRate = 0.947;
@@ -40,10 +45,18 @@ productivitree.Config = function() {
     };
 };
 
+productivitree.CubeConfig = function() {
+    this.mt_1 = 0.01;
+
+
+    this.animate = false;
+};
 
 
 
-var configObj = new productivitree.Config();
+
+var treeConfig = new productivitree.TreeConfig();
+var cubeConfig = new productivitree.CubeConfig();
 
 /**
  * initialize the scene, camera and objects
@@ -85,7 +98,7 @@ function init() {
     // set camera position
     camera.position.x = 5;
     camera.position.y = 5;
-    camera.position.z = 5;
+    camera.position.z = 10;
     // disabled because of orbitControls
     camera.lookAt(new THREE.Vector3(0,5,0));
 
@@ -103,25 +116,25 @@ function init() {
     scene.add(pointLight);
 
     // build the tree in scene
-    buildTree(configObj);
+    buildTree(treeConfig);
 
     // show stats
     addStats();
 
     // show controls
-    addControls(configObj);
+    addControls(treeConfig, cubeConfig);
 
     // add controls
     controls = new THREE.OrbitControls(camera, renderer.domElement);
     controls.enableDamping = true;
     controls.dampingFactor = 0.25;
-    controls.enableZoom = false;
+    controls.enableZoom = true;
 
     // set point to look at
     controls.target = new THREE.Vector3(0,5,0);
 
     // set automatic rotation
-    controls.autoRotate = true;
+    controls.autoRotate = false;
     controls.autoRotateSpeed = 0.3;
 
     // disable below the ground
@@ -132,7 +145,92 @@ function init() {
     productivitree.animation.initAnimations();
 
     // start rendering the scene
-    render();
+
+    var loader = new THREE.JSONLoader();
+    loader.load('static/models/morph_cube.json', function (geometry) {
+
+        var mat = new THREE.MeshLambertMaterial({
+            color: 0xff3333,
+            morphTargets: true
+        });
+
+        mesh = new THREE.Mesh(geometry, mat);
+        mesh.castShadow = true;
+        scene.add(mesh);
+
+        console.log(mesh);
+
+        mixer = new THREE.AnimationMixer(mesh);
+        var clip = THREE.AnimationClip.CreateFromMorphTargetSequence('animate', geometry.morphTargets, 30);
+
+        // TODO: add play / stop functionality
+        // mixer.clipAction( clip ).setDuration( 1 ).play();
+
+        // call the render function
+        render();
+    });
+
+
+
+
+
+    var testCubeMat = new THREE.MeshLambertMaterial({
+        color: 0xff3333,
+        morphTargets: true
+    });
+
+    testCube = new THREE.Mesh(
+        new THREE.CubeGeometry(2, 2, 2),
+        testCubeMat
+    );
+
+    testCube.position.set(-4, 0, 0);
+    testCube.morphTargetBase = -1;
+    testCube.morphTargetDictionary = {
+        animation_000000: 0,
+        animation_000001: 1
+    };
+
+    testCube.morphTargetInfluences = [
+        0,
+        0
+    ];
+
+    testCube.geometry.morphTargets = [
+        {
+            name: "animation_000000",
+            vertices: [
+                new THREE.Vector3(-1, -1, 1),
+                new THREE.Vector3(-1, 1, 1),
+                new THREE.Vector3(-1, -1, -1),
+                new THREE.Vector3(-1, 1, -1),
+                new THREE.Vector3(1, -1, 1),
+                new THREE.Vector3(1, 1, 1),
+                new THREE.Vector3(1, -1, -1),
+                new THREE.Vector3(1, 1, -1)
+            ]
+        },
+        {
+            name: "animation_000001",
+            vertices: [
+                new THREE.Vector3(-1, -1, 1),
+                new THREE.Vector3(-1.21944, 1, 1.86095),
+                new THREE.Vector3(-1, -1, -1),
+                new THREE.Vector3(-1, 1, -1),
+                new THREE.Vector3(1, -1, 1),
+                new THREE.Vector3(1, 1, -1),
+                new THREE.Vector3(1, -1, -1),
+                new THREE.Vector3(1.56556, 1, -1.26743)
+            ]
+        }
+    ];
+
+
+
+
+    console.log(testCube);
+
+    scene.add(testCube);
 }
 
 
@@ -261,13 +359,15 @@ function buildTree(config) {
 
     // name the tree container
     treeContainer.name = 'treeContainer';
-
     scene.add(treeContainer);
+
 }
 
 /////////////////////////////////////////////////
 ///////////////// HELPERS ///////////////////////
 /////////////////////////////////////////////////
+
+var prevTime = Date.now();
 
 // render every frame
 function render() {
@@ -275,6 +375,17 @@ function render() {
     stats.update(renderer);
     TWEEN.update();
     controls.update();
+
+
+    if ( mixer ) {
+
+        var time = Date.now();
+
+        mixer.update( ( time - prevTime ) * 0.001 );
+
+        prevTime = time;
+
+    }
 
     requestAnimationFrame(render);
 }
@@ -291,79 +402,87 @@ function addStats() {
     document.body.appendChild(stats.domElement);
 }
 
-function addControls(controlObject) {
+function addControls(treeControlObject, cubeControl) {
 
     var gui = new dat.GUI();
 
-    gui.add(controlObject, 'seed').onChange(function() {
-        buildTree(configObj);
+    gui.add(treeControlObject, 'seed').onChange(function() {
+        buildTree(treeConfig);
     });
-    gui.add(controlObject, 'segments').onChange(function() {
-        buildTree(configObj);
+    gui.add(treeControlObject, 'segments').onChange(function() {
+        buildTree(treeConfig);
     });
-    gui.add(controlObject, 'levels').onChange(function() {
-        buildTree(configObj);
+    gui.add(treeControlObject, 'levels').onChange(function() {
+        buildTree(treeConfig);
     });
-    gui.add(controlObject, 'vMultiplier').onChange(function() {
-        buildTree(configObj);
+    gui.add(treeControlObject, 'vMultiplier').onChange(function() {
+        buildTree(treeConfig);
     });
-    gui.add(controlObject, 'twigScale').onChange(function() {
-        buildTree(configObj);
+    gui.add(treeControlObject, 'twigScale').onChange(function() {
+        buildTree(treeConfig);
     });
-    gui.add(controlObject, 'initalBranchLength').onChange(function() {
-        buildTree(configObj);
+    gui.add(treeControlObject, 'initalBranchLength').onChange(function() {
+        buildTree(treeConfig);
     });
-    gui.add(controlObject, 'lengthFalloffFactor').onChange(function() {
-        buildTree(configObj);
+    gui.add(treeControlObject, 'lengthFalloffFactor').onChange(function() {
+        buildTree(treeConfig);
     });
-    gui.add(controlObject, 'lengthFalloffPower').onChange(function() {
-        buildTree(configObj);
+    gui.add(treeControlObject, 'lengthFalloffPower').onChange(function() {
+        buildTree(treeConfig);
     });
-    gui.add(controlObject, 'clumpMax').onChange(function() {
-        buildTree(configObj);
+    gui.add(treeControlObject, 'clumpMax').onChange(function() {
+        buildTree(treeConfig);
     });
-    gui.add(controlObject, 'clumpMin').onChange(function() {
-        buildTree(configObj);
+    gui.add(treeControlObject, 'clumpMin').onChange(function() {
+        buildTree(treeConfig);
     });
-    gui.add(controlObject, 'branchFactor').onChange(function() {
-        buildTree(configObj);
+    gui.add(treeControlObject, 'branchFactor').onChange(function() {
+        buildTree(treeConfig);
     });
-    gui.add(controlObject, 'dropAmount').min(-0.5).max(0.5).onChange(function() {
-        buildTree(configObj);
+    gui.add(treeControlObject, 'dropAmount').min(-0.5).max(0.5).onChange(function() {
+        buildTree(treeConfig);
     });
-    gui.add(controlObject, 'growAmount').onChange(function() {
-        buildTree(configObj);
+    gui.add(treeControlObject, 'growAmount').onChange(function() {
+        buildTree(treeConfig);
     });
-    gui.add(controlObject, 'sweepAmount').onChange(function() {
-        buildTree(configObj);
+    gui.add(treeControlObject, 'sweepAmount').onChange(function() {
+        buildTree(treeConfig);
     });
-    gui.add(controlObject, 'maxRadius').onChange(function() {
-        buildTree(configObj);
+    gui.add(treeControlObject, 'maxRadius').onChange(function() {
+        buildTree(treeConfig);
     });
-    gui.add(controlObject, 'climbRate').onChange(function() {
-        buildTree(configObj);
+    gui.add(treeControlObject, 'climbRate').onChange(function() {
+        buildTree(treeConfig);
     });
-    gui.add(controlObject, 'trunkKink').onChange(function() {
-        buildTree(configObj);
+    gui.add(treeControlObject, 'trunkKink').onChange(function() {
+        buildTree(treeConfig);
     });
-    gui.add(controlObject, 'treeSteps').onChange(function() {
-        buildTree(configObj);
+    gui.add(treeControlObject, 'treeSteps').onChange(function() {
+        buildTree(treeConfig);
     });
-    gui.add(controlObject, 'taperRate').onChange(function() {
-        buildTree(configObj);
+    gui.add(treeControlObject, 'taperRate').onChange(function() {
+        buildTree(treeConfig);
     });
-    gui.add(controlObject, 'radiusFalloffRate').onChange(function() {
-        buildTree(configObj);
+    gui.add(treeControlObject, 'radiusFalloffRate').onChange(function() {
+        buildTree(treeConfig);
     });
-    gui.add(controlObject, 'twistRate').onChange(function() {
-        buildTree(configObj);
+    gui.add(treeControlObject, 'twistRate').onChange(function() {
+        buildTree(treeConfig);
     });
-    gui.add(controlObject, 'radiusFalloffRate').onChange(function() {
-        buildTree(configObj);
+    gui.add(treeControlObject, 'radiusFalloffRate').onChange(function() {
+        buildTree(treeConfig);
     });
-    gui.add(controlObject, 'trunkLength').onChange(function() {
-        buildTree(configObj);
+    gui.add(treeControlObject, 'trunkLength').onChange(function() {
+        buildTree(treeConfig);
     });
+
+    // cube morph targets
+    gui.add(cubeControl, 'mt_1', 0, 1).step(0.01).listen().onChange(function (a) {
+        testCube.morphTargetInfluences[1] = a;
+    });
+
+    // TODO: animate control
+    // gui.add(cubeControl, 'animate');
 }
 
 // window resize function

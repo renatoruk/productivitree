@@ -1,4 +1,3 @@
-productivitree.animation = {};
 
 productivitree.animation.tweens = function() {
     return {

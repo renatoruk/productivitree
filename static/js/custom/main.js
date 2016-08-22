@@ -1,4 +1,4 @@
-var productivitree = {};
+var productivitree = productivitree || {};
 
 var container = document.getElementById('container');
 
@@ -8,22 +8,29 @@ var camera,
     renderer,
     scene,
     stats,
-    treeContainer;
+    treeContainer,
+    prevTime,
+    animationMixers = {};
 
-// initializing modules
+
+// Initializing modules
 productivitree.controls = {};
 productivitree.animation = {};
 productivitree.objects = {};
-productivitree.config = {};
 productivitree.ui = {};
 productivitree.helpers = {};
 
-// initialize the scene, camera and objects
+// Initialize the scene, camera and objects
 function init() {
     'use strict';
 
+    // Speed up calls by creating local references
+    var treeConfig = productivitree.config.tree;
+    var animation = productivitree.animation;
+    var treeHandler = productivitree.objects.treeHandler;
+
     /**
-     * create the scene
+     * Create the scene
      * @type {THREE.Scene}
      */
     scene = new THREE.Scene();
@@ -41,7 +48,7 @@ function init() {
      */
     renderer = new THREE.WebGLRenderer();
 
-    // set pixel ratio for retina displays
+    // Set pixel ratio for retina displays
     renderer.setPixelRatio(window.devicePixelRatio);
 
     /**
@@ -50,17 +57,17 @@ function init() {
      */
     renderer.setSize(window.innerWidth, window.innerHeight);
 
-    // add renderer to the container
+    // Add renderer to the container
     container.appendChild(renderer.domElement);
 
-    // set camera position
+    // Set camera position
     camera.position.x = 5;
     camera.position.y = 5;
     camera.position.z = 5;
-    // disabled because of orbitControls
-    camera.lookAt(new THREE.Vector3(0,5,0));
+    // Disabled because of orbitControls
+    camera.lookAt(new THREE.Vector3(0, 5, 0));
 
-    // add shadows
+    // Add shadows
     var spotLight = new THREE.SpotLight(0xffffff);
     spotLight.position.set(100, 150, 10);
     spotLight.shadow.camera.near = 20;
@@ -69,41 +76,75 @@ function init() {
 
     scene.add(spotLight);
 
-    // lights are needed for displaying the mesh
+    // Lights are needed for displaying the mesh
     var pointLight = new THREE.AmbientLight(0xFFFFFF);
     scene.add(pointLight);
 
-    // initialize config
-    productivitree.config.tree = new productivitree.objects.TreeConfig();
+    // Create tree and add it to the scene
+    treeHandler.addTreeToScene(treeConfig.start, treeConfig.end);
 
-    // create tree and add it to the scene
-    productivitree.objects.treeHandler.createTree(productivitree.config.tree);
-
-    // init stats
+    // Init stats
     productivitree.ui.stats.init();
 
-    // show GUI controls
-    productivitree.controls.gui.init(productivitree.config.tree);
 
-    // init mouse controls
+
+    // TODO: make it work for debug mode
+    // Init GUI controls for configurator
+    // productivitree.controls.gui.initConfigurator(productivitree.config.tree);
+
+
+    // init GUI controls for morphing
+    // productivitree.controls.gui.initMorphControl(
+    //     treeHandler.getMorphTargetNames(),
+    //     treeHandler.getTrunkMesh()
+    // );
+
+    // productivitree.controls.gui.initMorphControl(
+    //     treeHandler.getMorphTargetNames(),
+    //     treeHandler.getTwigMesh()
+    // );
+
+
+
+    animation.morph.createMorphAnimation('trunkGrow', treeHandler.getTrunkMesh());
+    animation.morph.createMorphAnimation('leaveGrow', treeHandler.getTwigMesh());
+
+    // animation.morph.playAnimation('trunkGrow', 60);
+    // animation.morph.playAnimation('leaveGrow', 60);
+
+
+    /**
+     * Add event listener to the button
+     * Play all animations on click
+     */
+    animation.dom.addPlayListener('.js-play-animation', 'all', 60);
+
+
+    // Init mouse controls
     productivitree.controls.mouse.init();
 
-    productivitree.animation.initAnimations();
 
-    // add event listener for screen resize
+    // Add event listener for screen resize
     window.addEventListener('resize', productivitree.helpers.adjustWindowResize, false);
 
-    // start rendering the scene
+    prevTime = Date.now();
+    // Start rendering the scene
     render();
 }
 
 
-// render every frame
 function render() {
     renderer.render(scene, camera);
     stats.update(renderer);
     TWEEN.update();
     productivitree.controls.mouse.update();
+
+    var time = Date.now();
+
+    animationMixers['trunkGrow'].update((time - prevTime) * 0.001);
+    animationMixers['leaveGrow'].update((time - prevTime) * 0.001);
+
+    prevTime = time;
 
     requestAnimationFrame(render);
 }

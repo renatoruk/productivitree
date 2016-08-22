@@ -1,71 +1,104 @@
+/**
+ *
+ * @param animationMixer
+ * @param mesh
+ * @param duration
+ * @param animationName
+ */
+productivitree.animation.morph = (function() {
 
-productivitree.animation.tweens = function() {
+    /**
+     * Container for animations
+     * @type {Object}
+     */
+    var animations = {};
+
+
+    /**
+     *
+     * @param animationName {String} - assigning a name for the animation
+     * @param mesh {Object} - object to assign mix animation
+     */
+    function createMorphAnimation(animationName, mesh) {
+        /**
+         * Create animation mixer for the animation
+         * @type {THREE.AnimationMixer}
+         */
+        animationMixers[animationName] = new THREE.AnimationMixer(mesh);
+        /**
+         * Assign object to the mixer property
+         * @type {{}}
+         */
+        animations[animationName] = {};
+        // Create clip for the mixer to animate
+        animations[animationName].clip = THREE.AnimationClip.CreateFromMorphTargetSequence(
+            animationName,
+            mesh.geometry.morphTargets,
+            60
+        );
+    }
+
+
+    /**
+     *
+     * @param animationName {String}
+     * @param duration {Number} - in seconds
+     */
+    function playAnimation(animationName, duration) {
+
+        // play all animations synchronously
+        if (animationName === 'all') {
+            for (var anim in animations) {
+                if (animations.hasOwnProperty(anim)) {
+                    animationMixers[anim].clipAction(animations[anim].clip).setDuration(duration).play();
+                }
+            }
+            return
+        }
+
+        // play morph animation clip
+        animationMixers[animationName].clipAction(animations[animationName].clip).setDuration(duration).play();
+    }
+
+
     return {
-        scale: {},
-        scaleReverse: {},
-        rotation: {},
-        rotateReverse: {}
+        createMorphAnimation: createMorphAnimation,
+        playAnimation: playAnimation
     }
-}();
 
-productivitree.animation.initAnimations = function() {
-
-    // set namespace
-    var tween = productivitree.animation.tweens;
-
-    var scale = {
-        initial: {x: 0.1, y: 0.1, z: 0.1},
-        target: {x: 1, y: 1, z: 1}
-    };
-
-    tween.scale = new TWEEN.Tween(scale.initial)
-    // .delay(2000)
-        .to(scale.target, 2000)
-        .easing(TWEEN.Easing.Sinusoidal.InOut)
-        .onUpdate(function() {
-            treeContainer.scale.x = scale.initial.x;
-            treeContainer.scale.y = scale.initial.y;
-            treeContainer.scale.z = scale.initial.z;
-            updateScaleRecursive(treeContainer);
-        });
+})();
 
 
-    // tween.rotate = new TWEEN.Tween(tree.rotation)
-    //     .delay(2000)
-    //     .to({ z: (treeRotGoal+360)* Math.PI / 180}, 2000)
-    //     .easing(TWEEN.Easing.Quartic.EaseOut);
+/**
+ * Add animation trigger to an element
+ * @type {{addPlayListener}}
+ */
+productivitree.animation.dom = (function() {
 
-    // tween.scale.start();
-};
+    var playButton;
+    var playAnimation = productivitree.animation.morph.playAnimation;
 
 
-// scale tween update
-function scaleTweenUpdate(el) {
-    updateScaleRecursive(el);
-}
-
-// recursivly update all branch childs
-function updateScaleRecursive(child) {
-    for (var c = 0; c < child.children.length; c++) {
-        updateScaleRecursive(child.children[c]);
-        child.children[c].updateMatrix();
-        child.children[c].geometry.applyMatrix(child.children[c].matrix);
-        child.children[c].matrix.identity();
-        child.children[c].geometry.vertices.scale = child.scale;
-        child.children[c].geometry.verticesNeedUpdate = true;
+    /**
+     * Get element with selector
+     * @param selector
+     * @returns {Element}
+     */
+    function selectElement(selector) {
+        return document.querySelector(selector);
     }
-}
 
 
-// DOM handling
-
-productivitree.animation.eventHandlers = (function() {
-
-    var _play_button = document.querySelector('.js-play-animation');
-
-    function addPlayListener() {
-        _play_button.addEventListener('click', function() {
-            productivitree.animation.tweens.scale.start();
+    /**
+     *
+     * @param selector - querySelector
+     * @param animationName {String} - animation to trigger
+     * @param duration - in seconds
+     */
+    function addPlayListener(selector, animationName, duration) {
+        playButton = selectElement(selector);
+        playButton.addEventListener('click', function() {
+            playAnimation(animationName, duration);
         });
     }
 
@@ -76,6 +109,4 @@ productivitree.animation.eventHandlers = (function() {
 })();
 
 
-(function() {
-    productivitree.animation.eventHandlers.addPlayListener();
-})();
+

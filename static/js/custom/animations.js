@@ -18,8 +18,9 @@ productivitree.animation.morph = (function() {
      *
      * @param animationName {String} - assigning a name for the animation
      * @param mesh {Object} - object to assign mix animation
+     * @param duration {Number} - in seconds
      */
-    function createMorphAnimation(animationName, mesh) {
+    function createMorphAnimation(animationName, mesh, duration) {
         /**
          * Create animation mixer for the animation
          * @type {THREE.AnimationMixer}
@@ -36,13 +37,13 @@ productivitree.animation.morph = (function() {
             mesh.geometry.morphTargets,
             60
         );
+        animationMixers[animationName].clipAction(animations[animationName].clip).setDuration(duration);
     }
 
 
     /**
      *
      * @param animationName {String}
-     * @param duration {Number} - in seconds
      */
     function playAnimation(animationName, duration) {
 
@@ -50,20 +51,44 @@ productivitree.animation.morph = (function() {
         if (animationName === 'all') {
             for (var anim in animations) {
                 if (animations.hasOwnProperty(anim)) {
-                    animationMixers[anim].clipAction(animations[anim].clip).setDuration(duration).play();
+                    animationMixers[anim]._actions[0].play();
                 }
             }
             return
         }
 
         // play morph animation clip
-        animationMixers[animationName].clipAction(animations[animationName].clip).setDuration(duration).play();
+        animationMixers[animationName]._actions[0].play();
+    }
+
+
+    /**
+     *
+     * @param animationName {String}
+     */
+    function pauseAnimation(animationName) {
+
+        // pause all animations synchronously
+        if (animationName === 'all') {
+            for (var anim in animations) {
+                if (animations.hasOwnProperty(anim)) {
+                    var paused = animationMixers[anim]._actions[0].paused;
+                    animationMixers[anim]._actions[0].paused = !paused;
+                }
+            }
+            return
+        }
+
+        // pause morph animation clip
+        var paused = animationMixers[animationName]._actions[0].paused;
+        animationMixers[animationName]._actions[0].paused = !paused;
     }
 
 
     return {
         createMorphAnimation: createMorphAnimation,
-        playAnimation: playAnimation
+        playAnimation: playAnimation,
+        pauseAnimation: pauseAnimation
     }
 
 })();
@@ -95,15 +120,48 @@ productivitree.animation.dom = (function() {
      * @param animationName {String} - animation to trigger
      * @param duration - in seconds
      */
-    function addPlayListener(selector, animationName, duration) {
-        playButton = selectElement(selector);
-        playButton.addEventListener('click', function() {
-            playAnimation(animationName, duration);
+    function clickHandler(selector, callback, secondCallback) {
+        // playButton = selectElement(selector);
+
+        // used for toggling callbacks
+        if (secondCallback) {
+            var toggle = true;
+        }
+
+        selectElement(selector).addEventListener('click', function() {
+            if (secondCallback) {
+                if (toggle) {
+                    callback();
+                    toggle = !toggle;
+                } else {
+                    secondCallback();
+                }
+            } else {
+                callback();
+            }
         });
     }
 
+
+    /**
+     *
+     * @param selector {String}
+     * @param mainText {String} - first string to test
+     * @param toggleText {String} - toggle string
+     */
+    function toggleText(selector, mainText, toggleText) {
+        var el = selectElement(selector);
+        if (el.innerHTML === mainText) {
+            el.innerHTML = toggleText;
+        } else {
+            el.innerHTML = mainText;
+        }
+    }
+
+
     return {
-        addPlayListener: addPlayListener
+        clickHandler: clickHandler,
+        toggleText: toggleText
     }
 
 })();

@@ -9,7 +9,8 @@ a {
     transition: all 0.2s;
 }
 
-.btn--play {
+.btn--play,
+.btn--pause {
     &:hover {
         background-color: #ff8400;
         user-select: none;

@@ -76,9 +76,9 @@ productivitree.controls.gui = (function() {
     /**
      * Initialize GUI controls for morph targets on a mesh
      * @param morphTargetNames {Array} - Array of names for individual morph targets
-     * @param mesh {Object} - Model to add controls to
+     * @param models {Array} - Array of models for adding controls to
      */
-    function initMorphControl(morphTargetNames, mesh) {
+    function initMorphControl(morphTargetNames, models) {
 
         /**
          * Track state of morph target influence
@@ -87,7 +87,7 @@ productivitree.controls.gui = (function() {
         var config = {};
 
         // Create gui in window
-        var gui = new dat.GUI();
+        gui = new dat.GUI();
 
         morphTargetNames.forEach(function(name, index) {
 
@@ -95,16 +95,45 @@ productivitree.controls.gui = (function() {
             config[name] = 0.0;
 
             gui.add(config, morphTargetNames[index], 0, 1).step(0.01).listen().onChange(function(influence) {
-                mesh.morphTargetInfluences[index] = influence;
+                // iterate through models and add control for the same influence target
+                for (var i = 0; i < models.length; i++) {
+                    models[i].morphTargetInfluences[index] = influence;
+                }
             });
 
         });
     }
 
 
+
+    function animationMixerControls(mixers) {
+
+        /**
+         * Track state of progress
+         * @type {{}}
+         */
+        var config = {
+            influence: 0.00
+        };
+
+        // Create gui in window
+        gui = new dat.GUI();
+
+
+        for (var animationMixer in mixers) {
+            if (mixers.hasOwnProperty(animationMixer)) {
+                gui.add(config, 'influence', 0.00, 1).step(0.01).listen().onChange(function(influence) {
+                    // TODO: figure a way to get animation progress
+                });
+            }
+        }
+    }
+
+
     return {
         initConfigurator: initConfigurator,
-        initMorphControl: initMorphControl
+        initMorphControl: initMorphControl,
+        animationMixerControls: animationMixerControls
     }
 
 })();

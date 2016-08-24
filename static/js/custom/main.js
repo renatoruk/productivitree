@@ -93,31 +93,29 @@ function init() {
     // productivitree.controls.gui.initConfigurator(productivitree.config.tree);
 
 
-    // init GUI controls for morphing
+    // Init GUI controls for morph steps controls
     // productivitree.controls.gui.initMorphControl(
     //     treeHandler.getMorphTargetNames(),
-    //     treeHandler.getTrunkMesh()
-    // );
-
-    // productivitree.controls.gui.initMorphControl(
-    //     treeHandler.getMorphTargetNames(),
-    //     treeHandler.getTwigMesh()
+    //     [treeHandler.getTrunkMesh(), treeHandler.getTwigMesh()]
     // );
 
 
-
-    animation.morph.createMorphAnimation('trunkGrow', treeHandler.getTrunkMesh());
-    animation.morph.createMorphAnimation('leaveGrow', treeHandler.getTwigMesh());
-
-    // animation.morph.playAnimation('trunkGrow', 60);
-    // animation.morph.playAnimation('leaveGrow', 60);
+    // create morph animation from morph targets
+    animation.morph.createMorphAnimation('trunkGrow', treeHandler.getTrunkMesh(), 5);
+    animation.morph.createMorphAnimation('leaveGrow', treeHandler.getTwigMesh(), 5);
 
 
-    /**
-     * Add event listener to the button
-     * Play all animations on click
-     */
-    animation.dom.addPlayListener('.js-play-animation', 'all', 60);
+    // Add event listener to the button
+    animation.dom.clickHandler('.js-toggle-animation', function() {
+            // 'all' triggers all animations
+            animation.morph.playAnimation('all');
+            animation.dom.toggleText('.js-toggle-animation', 'Play animation', 'Pause animation');
+        }, function() {
+            animation.morph.pauseAnimation('all');
+            animation.dom.toggleText('.js-toggle-animation', 'Play animation', 'Pause animation');
+        }
+    );
+
 
 
     // Init mouse controls

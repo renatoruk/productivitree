@@ -1,9 +1,18 @@
 @import "../../bower_components/normalize-css/normalize";
 
+@import "modules/reset";
+
+// colors
+
+@import "variables/colors";
+
 // UI components
 
+@import "components/typography";
 @import "components/buttons";
+@import "components/input";
 
 // Modules
 
 @import "modules/containers";
+

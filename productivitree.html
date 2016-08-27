@@ -4,16 +4,25 @@
     <meta charset="UTF-8">
     <title>Productivitree</title>
     <link rel="stylesheet" href="static/css/style.css">
-    <style>
-        body {
-            margin: 0;
-            padding: 0;
-            overflow: hidden;
-        }
-    </style>
 </head>
 <body>
     <div id="container"></div>
+
+
+    <div class="full-screen-wrap">
+        <section class="input-wrapper">
+            <h2>Please enter your name: </h2>
+            <ul class="input-list style-1">
+                <li>
+                    <input type="text" placeholder="John">
+                </li>
+                <li>
+                    <button class="btn btn--tree icon-tree btn--disabled"><span>Generate tree</span></button>
+                </li>
+            </ul>
+        </section>
+    </div>
+
     <div class="ui-container">
         <a class="btn btn--play js-toggle-animation">Play animation</a>
     </div>

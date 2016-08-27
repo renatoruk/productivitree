@@ -14,11 +14,12 @@ var camera,
 
 
 // Initializing modules
-productivitree.controls = {};
-productivitree.animation = {};
-productivitree.objects = {};
-productivitree.ui = {};
-productivitree.helpers = {};
+productivitree.controls = productivitree.controls || {};
+productivitree.animation = productivitree.animation || {};
+productivitree.objects = productivitree.objects || {};
+productivitree.ui = productivitree.ui || {};
+productivitree.helpers = productivitree.helpers || {};
+productivitree.customizer = productivitree.customizer || {};
 
 // Initialize the scene, camera and objects
 function init() {
@@ -149,7 +150,7 @@ function render() {
 
 
 // initialize the scene on window load
-window.onload = init;
+// window.onload = init;
 
 
 

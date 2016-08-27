@@ -1,10 +1,3 @@
-/**
- *
- * @param animationMixer
- * @param mesh
- * @param duration
- * @param animationName
- */
 productivitree.animation.morph = (function() {
 
     /**
@@ -117,8 +110,8 @@ productivitree.animation.dom = (function() {
     /**
      *
      * @param selector - querySelector
-     * @param animationName {String} - animation to trigger
-     * @param duration - in seconds
+     * @param callback {Function}
+     * @param secondCallback {Function}
      */
     function clickHandler(selector, callback, secondCallback) {
         // playButton = selectElement(selector);

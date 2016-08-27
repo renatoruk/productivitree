@@ -20,6 +20,7 @@ productivitree.objects = productivitree.objects || {};
 productivitree.ui = productivitree.ui || {};
 productivitree.helpers = productivitree.helpers || {};
 productivitree.customizer = productivitree.customizer || {};
+productivitree.dom = productivitree.dom|| {};
 
 // Initialize the scene, camera and objects
 function init() {
@@ -29,6 +30,11 @@ function init() {
     var treeConfig = productivitree.config.tree;
     var animation = productivitree.animation;
     var treeHandler = productivitree.objects.treeHandler;
+    var dom = productivitree.dom;
+
+    // main input wrapper element
+    var wrapper = document.querySelector('.js-wrap');
+
 
     /**
      * Create the scene
@@ -107,13 +113,13 @@ function init() {
 
 
     // Add event listener to the button
-    animation.dom.clickHandler('.js-toggle-animation', function() {
+    dom.clickHandler('.js-toggle-animation', function() {
             // 'all' triggers all animations
             animation.morph.playAnimation('all');
-            animation.dom.toggleText('.js-toggle-animation', 'Play animation', 'Pause animation');
+            dom.toggleText('.js-toggle-animation', 'Play animation', 'Pause animation');
         }, function() {
             animation.morph.pauseAnimation('all');
-            animation.dom.toggleText('.js-toggle-animation', 'Play animation', 'Pause animation');
+            dom.toggleText('.js-toggle-animation', 'Play animation', 'Pause animation');
         }
     );
 
@@ -129,6 +135,50 @@ function init() {
     prevTime = Date.now();
     // Start rendering the scene
     render();
+
+    // hide element after init
+    productivitree.animation.fade.init(wrapper);
+}
+
+
+function initConfigurator() {
+
+    // get text input element
+    var nameInput = document.querySelector('.js-input-box');
+    var initButton = document.querySelector('.js-init-tree');
+
+    // init customizer
+    var customizer = productivitree.customizer;
+    var dom = productivitree.dom;
+    var helpers = productivitree.helpers;
+
+    var nameAsciiValues;
+    var numValues;
+
+    nameInput.addEventListener('keyup', function() {
+        dom.enableElement(initButton, helpers.validateName(nameInput.value), 'btn--disabled');
+    });
+
+
+    initButton.addEventListener('click', function() {
+        // Check if button is enabled
+        if (!initButton.classList.contains('btn--disabled')) {
+            // convert name characters to ASCII values
+            nameAsciiValues = helpers.stringToAscii(nameInput.value);
+            // divide the values for easier manipulation
+            numValues = customizer.divideArrayElements(nameAsciiValues, 100);
+            // create random values if there aren't enough
+            numValues = customizer.fillWithRandomValues(numValues, 11);
+
+            console.log(numValues);
+
+            // change config with newly created values
+            customizer.changeConfig(numValues);
+
+            init();
+
+        }
+    });
 }
 
 
@@ -149,8 +199,8 @@ function render() {
 }
 
 
-// initialize the scene on window load
-// window.onload = init;
+// initialize the configurator on window load
+window.onload = initConfigurator;
 
 
 

@@ -38,7 +38,7 @@ productivitree.animation.morph = (function() {
      *
      * @param animationName {String}
      */
-    function playAnimation(animationName, duration) {
+    function playAnimation(animationName) {
 
         // play all animations synchronously
         if (animationName === 'all') {
@@ -78,6 +78,7 @@ productivitree.animation.morph = (function() {
     }
 
 
+
     return {
         createMorphAnimation: createMorphAnimation,
         playAnimation: playAnimation,
@@ -86,78 +87,28 @@ productivitree.animation.morph = (function() {
 
 })();
 
-
-/**
- * Add animation trigger to an element
- * @type {{addPlayListener}}
- */
-productivitree.animation.dom = (function() {
-
-    var playButton;
-    var playAnimation = productivitree.animation.morph.playAnimation;
+productivitree.animation.fade = (function() {
 
 
     /**
-     * Get element with selector
-     * @param selector
-     * @returns {Element}
+     * Hide DOM element
+     * @param element
      */
-    function selectElement(selector) {
-        return document.querySelector(selector);
-    }
-
-
-    /**
-     *
-     * @param selector - querySelector
-     * @param callback {Function}
-     * @param secondCallback {Function}
-     */
-    function clickHandler(selector, callback, secondCallback) {
-        // playButton = selectElement(selector);
-
-        // used for toggling callbacks
-        if (secondCallback) {
-            var toggle = true;
-        }
-
-        selectElement(selector).addEventListener('click', function() {
-            if (secondCallback) {
-                if (toggle) {
-                    callback();
-                    toggle = !toggle;
-                } else {
-                    secondCallback();
-                }
-            } else {
-                callback();
+    function init(element) {
+        var op = 1;  // initial opacity
+        var timer = setInterval(function () {
+            if (op <= 0.1){
+                clearInterval(timer);
+                element.style.display = 'none';
             }
-        });
+            element.style.opacity = op;
+            element.style.filter = 'alpha(opacity=' + op * 100 + ")";
+            op -= op * 0.1;
+        }, 12);
     }
-
-
-    /**
-     *
-     * @param selector {String}
-     * @param mainText {String} - first string to test
-     * @param toggleText {String} - toggle string
-     */
-    function toggleText(selector, mainText, toggleText) {
-        var el = selectElement(selector);
-        if (el.innerHTML === mainText) {
-            el.innerHTML = toggleText;
-        } else {
-            el.innerHTML = mainText;
-        }
-    }
-
 
     return {
-        clickHandler: clickHandler,
-        toggleText: toggleText
+        init: init
     }
 
 })();
-
-
-

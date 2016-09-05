@@ -76,7 +76,7 @@ productivitree.objects.treeHandler = (function() {
             morphTargets: true
         });
 
-        var barkTexture = new THREE.TextureLoader().load('static/textures/tree.jpg');
+        var barkTexture = new THREE.TextureLoader().load('static/textures/trunk_texture.jpg');
 
         barkTexture.wrapS = THREE.RepeatWrapping;
         barkTexture.wrapT = THREE.RepeatWrapping;
@@ -111,7 +111,7 @@ productivitree.objects.treeHandler = (function() {
             morphTargets: true
         });
         // Set color texture map. Default is null.
-        leaveMat.map = new THREE.TextureLoader().load('static/textures/leaf.png');
+        leaveMat.map = new THREE.TextureLoader().load('static/textures/leaf_texture.png');
         /**
          * Defines which of the face sides will be rendered - front, back or both.
          * Default is THREE.FrontSide. Other options are THREE.BackSide and THREE.DoubleSide.

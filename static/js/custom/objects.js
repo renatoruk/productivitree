@@ -173,6 +173,11 @@ productivitree.objects.treeHandler = (function() {
         scene.add(treeContainer);
     }
 
+    // Credit goes to: Jos Dirksen
+    // Book: Three.js Essentials
+    // Published by Packt Publishing, 2014
+    // Chapter 5 - programmatic geometries
+    // Creating parametric trees
 
     /**
      *

@@ -3,7 +3,6 @@ var productivitree = productivitree || {};
 var container = document.getElementById('container');
 
 
-// TODO: minimize global scope
 var camera,
     renderer,
     scene,
@@ -94,17 +93,6 @@ function init() {
     productivitree.ui.stats.init();
 
 
-
-    // TODO: make it work for debug mode
-    // Init GUI controls for configurator
-    // productivitree.controls.gui.initConfigurator(productivitree.config.tree);
-
-
-    // Init GUI controls for morph steps controls
-    // productivitree.controls.gui.initMorphControl(
-    //     treeHandler.getMorphTargetNames(),
-    //     [treeHandler.getTrunkMesh(), treeHandler.getTwigMesh()]
-    // );
 
 
     // create morph animation from morph targets

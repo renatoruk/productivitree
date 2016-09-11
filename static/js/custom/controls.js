@@ -123,7 +123,7 @@ productivitree.controls.gui = (function() {
         for (var animationMixer in mixers) {
             if (mixers.hasOwnProperty(animationMixer)) {
                 gui.add(config, 'influence', 0.00, 1).step(0.01).listen().onChange(function(influence) {
-                    // TODO: figure a way to get animation progress
+
                 });
             }
         }

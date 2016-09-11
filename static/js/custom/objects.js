@@ -63,10 +63,6 @@ productivitree.objects.treeHandler = (function() {
         // wrapper for trunk and leaves
         treeContainer = new THREE.Object3D();
 
-        // initialize the tree
-        // this was only for re-rendering tree after changing props
-        // TODO: add this for debug mode
-        // var treeGeometry = generateTreeGeometry(startConfig);
 
         var trunkGeom = morphTargetsConfig.trunkMorphArray[0];
         var leaveGeom = morphTargetsConfig.leaveMorphArray[0];
@@ -126,8 +122,6 @@ productivitree.objects.treeHandler = (function() {
          */
         leaveMat.transparent = true;
 
-
-        // TODO: create morph targets for twig mesh
         twigMesh = new THREE.Mesh(leaveGeom, leaveMat);
         twigMesh.name = 'twig';
 
@@ -158,9 +152,6 @@ productivitree.objects.treeHandler = (function() {
             morphTargetNames
         );
 
-
-        // createAnimation('mixer1', trunkMesh, 50, 'trunkGrowth');
-        // createAnimation('mixer2', twigMesh, 50, 'leafGrowth');
 
 
         // add objects to container

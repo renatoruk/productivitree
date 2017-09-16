@@ -36,7 +36,7 @@ productivitree.config = {
             trunkLength: 1
         },
         end: {
-            seed: 600,
+            seed: 2000,
             segments: 6,
             levels: 5,
             vMultiplier: 1,

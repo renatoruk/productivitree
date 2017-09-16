@@ -96,8 +96,8 @@ function init() {
 
 
     // create morph animation from morph targets
-    animation.morph.createMorphAnimation('trunkGrow', treeHandler.getTrunkMesh(), 5);
-    animation.morph.createMorphAnimation('leaveGrow', treeHandler.getTwigMesh(), 5);
+    animation.morph.createMorphAnimation('trunkGrow', treeHandler.getTrunkMesh(), 30);
+    animation.morph.createMorphAnimation('leaveGrow', treeHandler.getTwigMesh(), 30);
 
 
     // Add event listener to the button
